@@ -29,12 +29,13 @@ public class StudentController {
     @Qualifier("studentMapper")
     private final ModelMapper mapper;
 
+    @Operation(summary="Lista todos los estudiantes.")
     @GetMapping
     public ResponseEntity<List<StudentDTO>> readAll() throws Exception{
         List<StudentDTO> list = service.readAll().stream().map(this::convertToDto).collect(Collectors.toList());
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
-
+    @Operation(summary="Lista la información del estudiante pasado como parámetro.")
     @GetMapping("/{id}")
     public ResponseEntity<StudentDTO> readById(@PathVariable("id") Integer id) throws Exception{
         Student obj = service.readById(id);
@@ -43,13 +44,13 @@ public class StudentController {
         }
         return new ResponseEntity<>(this.convertToDto(obj), HttpStatus.OK);
     }
-
+    @Operation(summary="Inserta un nuevo estudiante.")
     @PostMapping
     public ResponseEntity<StudentDTO> create(@Valid @RequestBody StudentDTO dto) throws Exception{
         Student obj = service.save(convertToEntity(dto));
         return new ResponseEntity<>(convertToDto(obj), HttpStatus.CREATED);
     }
-
+    @Operation(summary = "Actualiza los datos de un estudiante.")
     @PutMapping
     public ResponseEntity<StudentDTO> update(@Valid @RequestBody StudentDTO dto) throws Exception{
         Student obj = service.readById(dto.getIdStudent());
@@ -61,7 +62,7 @@ public class StudentController {
         Student stu = service.update(convertToEntity(dto));
         return new ResponseEntity<>(convertToDto(stu), HttpStatus.OK);
     }
-
+    @Operation(summary="Elimina el estudiante pasado como parámetro.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception{
         Student obj = service.readById(id);
@@ -72,13 +73,13 @@ public class StudentController {
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
+    @Operation(summary="Busca los estudiantes cuyo nombre coincida con el parámetro ingresado.")
     @GetMapping("/find/name/{name}")
     public ResponseEntity<List<StudentDTO>> findByName(@PathVariable("name") String name){
         List<StudentDTO> lst = service.findByName(name).stream().map(this::convertToDto).collect(Collectors.toList());
         return new ResponseEntity<>(lst, HttpStatus.OK);
     }
-
+    @Operation(summary="Listado de estudiantes con paginación.")
     @GetMapping("/pagination")
     public ResponseEntity<Page<Student>> findPage(
             @RequestParam(name = "page", defaultValue = "0") int page,
@@ -90,7 +91,7 @@ public class StudentController {
 
         return new ResponseEntity<>(pageResponse, HttpStatus.OK);
     }
-
+    @Operation(summary = "Lista los estudiantes ordenados por nombre en forma asc o desc según el parámetro.")
     @GetMapping("/order")
     public ResponseEntity<List<StudentDTO>> findAllOrder(
             @RequestParam(name = "param", defaultValue = "ASC") String param

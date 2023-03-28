@@ -1,6 +1,7 @@
 package mitocode.controller;
 
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import mitocode.dto.CourseDTO;
 import mitocode.exception.ModelNotFoundException;
@@ -27,13 +28,13 @@ public class CourseController {
     private final ICourseService service;
         @Qualifier("courseMapper")
         private final ModelMapper mapper;
-
+        @Operation(summary="Lista todos los cursos.")
         @GetMapping
         public ResponseEntity<List<CourseDTO>> readAll() throws Exception{
             List<CourseDTO> list = service.readAll().stream().map(this::convertToDto).collect(Collectors.toList());
             return new ResponseEntity<>(list, HttpStatus.OK);
         }
-
+        @Operation(summary="Lista la información del curso pasado como parámetro.")
         @GetMapping("/{id}")
         public ResponseEntity<CourseDTO> readById(@PathVariable("id") Integer id) throws Exception{
             Course obj = service.readById(id);
@@ -42,13 +43,13 @@ public class CourseController {
             }
             return new ResponseEntity<>(this.convertToDto(obj), HttpStatus.OK);
         }
-
+        @Operation(summary="Inserta un nuevo curso.")
         @PostMapping
         public ResponseEntity<CourseDTO> create(@Valid @RequestBody CourseDTO dto) throws Exception{
             Course obj = service.save(convertToEntity(dto));
             return new ResponseEntity<>(convertToDto(obj), HttpStatus.CREATED);
         }
-
+        @Operation(summary = "Actualiza los datos de un curso.")
         @PutMapping
         public ResponseEntity<CourseDTO> update(@Valid @RequestBody CourseDTO dto) throws Exception{
             Course obj = service.readById(dto.getIdCourse());
@@ -60,7 +61,7 @@ public class CourseController {
             Course cou = service.update(convertToEntity(dto));
             return new ResponseEntity<>(convertToDto(cou), HttpStatus.OK);
         }
-
+        @Operation(summary="Elimina el curso pasado como parámetro.")
         @DeleteMapping("/{id}")
         public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception{
             Course obj = service.readById(id);
@@ -71,12 +72,13 @@ public class CourseController {
             service.delete(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+        @Operation(summary="Busca los cursos cuyo nombre coincida con el parámetro ingresado.")
         @GetMapping("/find/name/{name}")
         public ResponseEntity<List<CourseDTO>> findByName(@PathVariable("name") String name){
             List<CourseDTO> lst = service.findByName(name).stream().map(this::convertToDto).collect(Collectors.toList());
             return new ResponseEntity<>(lst, HttpStatus.OK);
         }
-
+        @Operation(summary="Listado de cursos con paginación.")
         @GetMapping("/pagination")
         public ResponseEntity<Page<Course>> findPage(
                 @RequestParam(name = "page", defaultValue = "0") int page,
@@ -88,7 +90,7 @@ public class CourseController {
 
             return new ResponseEntity<>(pageResponse, HttpStatus.OK);
         }
-
+        @Operation(summary = "Lista los cursos ordenados por nombre en forma asc o desc según el parámetro.")
         @GetMapping("/order")
         public ResponseEntity<List<CourseDTO>> findAllOrder(
                 @RequestParam(name = "param", defaultValue = "ASC") String param

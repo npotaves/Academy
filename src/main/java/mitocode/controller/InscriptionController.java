@@ -32,13 +32,13 @@ public class InscriptionController {
 
     @Qualifier("inscriptionMapper")
     private final ModelMapper mapper;
-
+    @Operation(summary="Lista todos las inscripciones.")
     @GetMapping
     public ResponseEntity<List<InscriptionDTO>> readAll() throws Exception {
         List<InscriptionDTO> list = service.readAll().stream().map(this::convertToDto).collect(Collectors.toList());
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
-
+    @Operation(summary="Lista la información de la inscripción pasada como parámetro.")
     @GetMapping("/{id}")
     public ResponseEntity<InscriptionDTO> readById(@PathVariable("id") Integer id) throws Exception {
         Inscription obj = service.readById(id);
@@ -47,13 +47,13 @@ public class InscriptionController {
         }
         return new ResponseEntity<>(this.convertToDto(obj), HttpStatus.OK);
     }
-
+    @Operation(summary="Inserta una nueva inscripción a cursos para un estudiante.")
     @PostMapping
     public ResponseEntity<InscriptionDTO> create(@Valid @RequestBody InscriptionDTO dto) throws Exception {
         Inscription obj = service.save(convertToEntity(dto));
         return new ResponseEntity<>(convertToDto(obj), HttpStatus.CREATED);
     }
-
+    @Operation(summary="Modifica una inscripción a cursos.")
     @PutMapping
     public ResponseEntity<InscriptionDTO> update(@Valid @RequestBody InscriptionDTO dto) throws Exception {
         Inscription obj = service.readById(dto.getIdInscription());
@@ -65,7 +65,7 @@ public class InscriptionController {
         Inscription sale = service.update(convertToEntity(dto));
         return new ResponseEntity<>(convertToDto(sale), HttpStatus.OK);
     }
-
+    @Operation(summary="Elimina una inscripción a cursos.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         Inscription obj = service.readById(id);
